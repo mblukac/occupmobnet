@@ -28,17 +28,6 @@ data_balanced <- merge(data, iddatvol,
                        all.x = TRUE, all.y = TRUE, by = c("U_ID", "YEAR"))
 rm(iddatvol)
 
-# impute missing occupations from (t-1)
-# data_balanced_imputed <- data_balanced %>%
-#   group_by(U_ID) %>% 
-#   zoo::na.locf() %>%
-#   ungroup()
-
-# transform into wide format
-# data_imputed_wide <- data_balanced_imputed %>%
-#   pivot_wider(id_cols = c("COUNTRY", "U_ID"), names_from = "YEAR",
-#               names_prefix = "year", values_from = "PL050")
-
 data_wide <- data_balanced %>%
   pivot_wider(id_cols = c("COUNTRY", "U_ID"), names_from = "YEAR",
               names_prefix = "year", values_from = "PL050")
@@ -62,5 +51,9 @@ t1 <- xtabs( ~ year2010 + year2009, data = data_wide3)
 t2 <- xtabs( ~ year2011 + year2010, data = data_wide3)
 
 t_tot <- t1 + t2
+
+# % of people transitioning y2y
+diag(t_tot) / colSums(t_tot)
+
 colSums(t1)
 
