@@ -57,3 +57,28 @@ diag(t_tot) / colSums(t_tot)
 
 colSums(t1)
 
+t_tot_m <- as.matrix(t_tot)[-c(1:10), -c(1:10)]
+t_tot_m_norm <- t_tot_m / ( sqrt(rowSums(t_tot_m)) * sqrt(colSums(t_tot_m)) )
+t_tot_m_normtrim <- ifelse(t_tot_m_norm < .01, 0, 1)
+
+# Visualize the net
+o2o <- graph_from_adjacency_matrix(t_tot_m_normtrim, mode = "directed")
+
+# Network clustering via Louvain algo
+# set.seed(124)
+# louvain <- cluster_louvain(skilldat, weights = NULL)
+# # vector of communities
+# skill_cluster <- membership(louvain)
+# skill_cluster <- ifelse(!(skill_cluster %in% c(15, 20, 43, 26, 28, 30, 31, 32, 33)),
+#                         1, skill_cluster)
+# 
+# # Add clusters
+# V(skilldat)$community <- as.factor(skill_cluster)
+# V(skilldat)$prevalence <- summaries_per_skill_trimmed$skill_occurence
+
+ggraph(o2o, layout = "nicely") +
+  geom_edge_link(alpha = 0.1) +
+  geom_node_text(aes(label = name)) +
+  theme_void() +
+  annotate("text", x = 0, y = 0, label = "More than 1% changing")
+ 
