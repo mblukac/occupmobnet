@@ -47,6 +47,34 @@ data_wide2 <- data_wide %>%
 data_wide3 <- data_wide2 %>%
   mutate(year2010 = ifelse(is.na(year2010), year2009, year2010))
 
+### import classifications
+classif <- rio::import("data/EUSILC/eusilc_5c_PH_Classification_withTSUE.sav")
+data_classif <- data_balanced %>%
+  select(U_ID, YEAR, PL050) %>%
+  left_join(classif, by = c("U_ID", "YEAR"))
+
+data_classif_final <- data_classif %>%
+  mutate(segment = ifelse(`MClass#` == 3, "Unemployed",
+                   ifelse(`MClass#` == 2, "Part-time",
+                   ifelse(`MClass#` == 5, "Temporary",
+                   ifelse(`MClass#` == 4, "Supervisors",
+                   ifelse(`MClass#` == 1, "Standard", NA)))))) %>%
+  mutate(segment = factor(segment, 
+                          levels = c("Unemployed", "Part-time",
+                                     "Temporary", "Standard",
+                                     "Supervisors")))
+
+data_classif_final %>%
+  mutate(seg_pt = ifelse(segment == "Part-time", 1, 0),
+         seg_temp = ifelse(segment == "Temporary", 1, 0),
+         seg_insecure = seg_pt + seg_temp) %>%
+  group_by(PL050) %>%
+  summarize(prop_PT = mean(seg_pt, na.rm = T),
+            prop_TEMP = mean(seg_temp, na.rm = T),
+            prop_INSECURE = mean(seg_insecure, na.rm = T)) -> occup_insec_summary
+
+
+
 t1 <- xtabs( ~ year2010 + year2009, data = data_wide3)
 t2 <- xtabs( ~ year2011 + year2010, data = data_wide3)
 
@@ -61,6 +89,10 @@ t_tot_m <- as.matrix(t_tot)[-c(1:10), -c(1:10)]
 t_tot_m_norm <- t_tot_m / ( sqrt(rowSums(t_tot_m)) * sqrt(colSums(t_tot_m)) )
 t_tot_m_normtrim <- ifelse(t_tot_m_norm < .01, 0, 1)
 
+occup_insec_summary %>%
+  filter(PL050 %in% row.names(t_tot_m_normtrim)) -> occup_insec_summary_trim
+  
+
 # Visualize the net
 o2o <- graph_from_adjacency_matrix(t_tot_m_normtrim, mode = "directed")
 
@@ -73,12 +105,17 @@ o2o <- graph_from_adjacency_matrix(t_tot_m_normtrim, mode = "directed")
 #                         1, skill_cluster)
 # 
 # # Add clusters
-# V(skilldat)$community <- as.factor(skill_cluster)
+V(o2o)$PT <- occup_insec_summary_trim$prop_PT
+V(o2o)$TEMP <- occup_insec_summary_trim$prop_TEMP
+V(o2o)$INSECURE <- occup_insec_summary_trim$prop_INSECURE
 # V(skilldat)$prevalence <- summaries_per_skill_trimmed$skill_occurence
 
-ggraph(o2o, layout = "nicely") +
+ggraph(o2o, layout = "kk") +
   geom_edge_link(alpha = 0.1) +
-  geom_node_text(aes(label = name)) +
+  geom_node_point(aes(color = TEMP), size = 9) +
   theme_void() +
-  annotate("text", x = 0, y = 0, label = "More than 1% changing")
- 
+  scale_color_viridis_c() +
+  geom_node_text(aes(label = name), color = "white") +
+  labs(caption = "More than 1% changing",
+       title = "Occupation mobility network")
+  #geom_node_text(aes(label = name)) +
