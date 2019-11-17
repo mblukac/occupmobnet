@@ -1,6 +1,8 @@
 ###############################################################################
 # Occupational Mobility Network for Europe
 # INET Oxford Project
+# EU-SILC data
+# Martin Lukac @mblukac
 ###############################################################################
 
 # Source libraries for the project

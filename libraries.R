@@ -1,7 +1,10 @@
 # List of libraries
+library(plyr)
 library(tidyverse)
 library(tidygraph)
 library(rio)
 library(tidyr)
 library(igraph)
 library(ggraph)
+library(data.table)
+library(dtplyr)
