@@ -26,3 +26,10 @@ read_in <- function(country){
 }
 
 AT <- read_in("AT")
+
+
+## Try BHPS and Understanding Society
+us1 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/Understanding Society/spss/spss19/a_empstat.sav")
+us2 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/Understanding Society/spss/spss19/e_empstat.sav")
+
+bhps1 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/BHPS/spss/spss12/ajobhist.sav")
