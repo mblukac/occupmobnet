@@ -19,9 +19,9 @@ read_in <- function(country){
     llply(read.csv, header = T) %>%
     llply(subset, select = c(COUNTRY,
                              REFYEAR,
-                             IS881D,
+                             #IS881D,
                              IS883D,
-                             ISCO1D,
+                             #ISCO1D,
                              ISCO3D, 
                              COEFF
     )) %>%
@@ -38,7 +38,7 @@ read_in <- function(country){
 all_cntrs <- list.files("data/LFS/Omnibus Data Folder")
 # Read all country datafiles in
 for(i in 1:length(all_cntrs)){
-  message(paste0("=== Reading in ", country, " === Progress ", 
+  message(paste0("=== Reading in ", all_cntrs[i], " === Progress ", 
                  i, "/", length(all_cntrs), " ==="))
   assign(all_cntrs[i], read_in(all_cntrs[i]))
 }
@@ -53,8 +53,8 @@ setdiff(at_isco, at_is88)
 
 
 ## Try BHPS and Understanding Society
-us1 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/Understanding Society/spss/spss19/a_empstat.sav")
-us2 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/Understanding Society/spss/spss19/e_empstat.sav")
-
-bhps1 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/BHPS/spss/spss12/ajobhist.sav")
+# us1 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/Understanding Society/spss/spss19/a_empstat.sav")
+# us2 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/Understanding Society/spss/spss19/e_empstat.sav")
+# 
+# bhps1 <- import("/Users/martinlukac/Desktop/Projects/OLD Academic Projects/BHPS and Understanding Society Data/BHPS/spss/spss12/ajobhist.sav")
 
