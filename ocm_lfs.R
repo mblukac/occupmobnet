@@ -19,13 +19,14 @@ read_in <- function(country){
     llply(read.csv, header = T) %>%
     llply(subset, select = c(COUNTRY,
                              REFYEAR,
-                             #IS881D,
                              IS883D,
-                             #ISCO1D,
                              ISCO3D, 
                              COEFF
     )) %>%
     rbindlist(fill = TRUE) -> country_dataset
+  
+  country_dataset <- country_dataset %>%
+    mutate(isco = ifelse(REFYEAR >= 2011, ISCO3D, IS883D))
   
   # reset WD
   setwd(file.path(oldwd))
@@ -44,10 +45,10 @@ for(i in 1:length(all_cntrs)){
 }
 
 
+
 # Problem with change in ISCO coding
 at_isco <- names(table(AT$ISCO3D))
 at_is88 <- names(table(AT$IS883D))
-
 intersect(at_isco, at_is88)
 setdiff(at_isco, at_is88)
 

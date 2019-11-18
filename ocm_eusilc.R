@@ -112,12 +112,31 @@ V(o2o)$TEMP <- occup_insec_summary_trim$prop_TEMP
 V(o2o)$INSECURE <- occup_insec_summary_trim$prop_INSECURE
 # V(skilldat)$prevalence <- summaries_per_skill_trimmed$skill_occurence
 
-ggraph(o2o, layout = "kk") +
+base_ocm_net <- ggraph(o2o, layout = "kk") +
   geom_edge_link(alpha = 0.1) +
-  geom_node_point(aes(color = TEMP), size = 9) +
+  #geom_node_point(aes(color = INSECURE), size = 9) +
   theme_void() +
-  scale_color_viridis_c() +
+  scale_color_viridis_c()
+  #geom_node_text(aes(label = name), color = "white") +
+  # labs(caption = "More than 1% changing",
+  #     title = "Occupation mobility network")
+  #geom_node_text(aes(label = name))
+
+ocm_insecure <- base_ocm_net +
+  geom_node_point(aes(color = INSECURE), size = 9) +
+  geom_node_text(aes(label = name), color = "white") 
+ggsave("results/ocm_insecure.png", ocm_insecure)
+ocm_temp <- base_ocm_net +
+  geom_node_point(aes(color = TEMP), size = 9) +
   geom_node_text(aes(label = name), color = "white") +
-  labs(caption = "More than 1% changing",
-       title = "Occupation mobility network")
-  #geom_node_text(aes(label = name)) +
+  theme(
+    legend.title = element_blank()
+  )
+ggsave("results/ocm_temp.png", ocm_temp)
+ocm_pt <- base_ocm_net +
+  geom_node_point(aes(color = PT), size = 9) +
+  geom_node_text(aes(label = name), color = "white")+
+  theme(
+    legend.title = element_blank()
+  )
+ggsave("results/ocm_pt.png", ocm_pt)
